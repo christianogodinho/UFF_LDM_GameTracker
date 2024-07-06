@@ -6,6 +6,19 @@ class DatabaseService{
   static Database? _db;
   static final DatabaseService instance = DatabaseService._constructor();
 
+  final String _userTableName = 'user';
+  final String _userIdColumn = 'id';
+  final String _userNameColumn = 'name';
+  final String _userPasswordColumn = 'password';
+
+  final String _gameTableName = 'game';
+  final String _gameIdColumn = 'id';
+  //user_id references user.id
+  final String _gameNameColumn = 'name';
+  final String _gameReleaseDateColumn = 'release_date';
+  final String _gameDescriptionColumn = 'description';
+
+
   DatabaseService._constructor();
 
   Future<Database> get database async {
@@ -105,4 +118,17 @@ class DatabaseService{
     );
     return database;
   }
+
+  void addUser(List<String> content,) async {
+    final db = await database;
+    await db.insert(
+      _userTableName, 
+      {
+        _userNameColumn: content[0],
+        _userPasswordColumn: content[1],
+      }
+    );
+  }
+
+  
 }
