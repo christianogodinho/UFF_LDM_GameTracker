@@ -1,39 +1,12 @@
-import 'package:path/path.dart';
+import 'package:game_tracker/jsonmodels/user_model.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite/sqlite_api.dart';
+import 'package:path/path.dart';
 
-class DatabaseService{
-  static Database? _db;
-  static final DatabaseService instance = DatabaseService._constructor();
+import '../jsonmodels/game_model.dart';
 
-  final String _userTableName = 'user';
-  final String _userIdColumn = 'id';
-  final String _userNameColumn = 'name';
-  final String _userPasswordColumn = 'password';
-
-  final String _gameTableName = 'game';
-  final String _gameIdColumn = 'id';
-  //user_id references user.id
-  final String _gameNameColumn = 'name';
-  final String _gameReleaseDateColumn = 'release_date';
-  final String _gameDescriptionColumn = 'description';
-
-
-  DatabaseService._constructor();
-
-  Future<Database> get database async {
-    if(_db != null) return _db!;
-    _db = await getDatabase();
-    return _db!;
-  }
-
-  Future<Database> getDatabase() async {
-    final databaseDirPath = await getDatabasesPath();
-    final databasePath = join(databaseDirPath, "master_db.db");
-    final database = await openDatabase(
-      databasePath,
-      onCreate:(db, version) {
-        db.execute('''
+class DatabaseHelper {
+  final databaseName = "gametracker.db";
+  String create_script = '''
         CREATE TABLE user(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name VARCHAR NOT NULL,
@@ -113,22 +86,85 @@ class DatabaseService{
         select game.name, genre.name from game left join game_genre on game.id = game_genre.game_id left join genre on genre.id = game_genre.genre_id;
 
         select game.name, AVG(review.score) from game left join review on game.id = review.game_id where game.id = 1;
-      ''');
+  ''';
+
+  Future<Database> initDB() async {
+    final databasePath = await getDatabasesPath();
+    final path = join(databasePath, databaseName);
+
+    return openDatabase(path, 
+      version:1, 
+      onCreate:(db, version) async {
+        await db.execute(create_script);
       },
     );
-    return database;
   }
 
-  void addUser(List<String> content,) async {
-    final db = await database;
-    await db.insert(
-      _userTableName, 
-      {
-        _userNameColumn: content[0],
-        _userPasswordColumn: content[1],
-      }
+  //Create Game
+  Future<int> createGame(GameModel game) async {
+    final Database db = await initDB();
+    return db.insert('game', game.toMap());
+  }
+
+  //Get Game
+  Future<List<GameModel>> getGames() async {
+    final Database db = await initDB();
+    List<Map<String, Object?>> result = await db.query('game');
+    return result.map((e) => GameModel.fromMap(e)).toList();
+  }
+
+  //Delete Game
+  Future<int> deleteGame(int id) async{
+    final Database db = await initDB();
+    return db.delete('game', where: 'id = ?', whereArgs: [id]);
+  }
+
+  //Update Game
+  Future<int> updateGame(title, user_id, description, release_date) async{
+    final Database db = await initDB();
+    return db.rawUpdate(
+      "update game set nome = ?, user_id = ?, description = ?, release_date = ?", 
+      [title, user_id, description, release_date]);
+  }
+
+  //Search Game
+  Future<List<GameModel>> searchGame(String keyword) async{
+    final Database db = await initDB();
+    List<Map<String, Object?>> searchResult = await db.rawQuery(
+      "select * from game where name LIKE ?", ["%$keyword"]
     );
+
+    return searchResult.map((e) => GameModel.fromMap(e)).toList();
   }
 
-  
+  //Login
+  Future<bool> login(Users user) async{
+    final Database db = await initDB();
+
+    var result = await db.rawQuery(
+      "select * from user where name = '${user.name}' AND password = '${user.password}'"
+      );
+
+    if(result.isNotEmpty){
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  //Sign up
+  Future<int> signUp(Users user) async{
+    final Database db = await initDB();
+
+    var result = await db.rawQuery(
+      "select * from user where name = '${user.name}'"
+      );
+
+    if(result.isEmpty){
+      return db.insert('user', user.toMap());
+    } else{
+      return 0;
+    }
+  }
+
 }
