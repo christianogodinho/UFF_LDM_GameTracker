@@ -81,22 +81,26 @@ class DatabaseHelper {
         INSERT INTO review(user_id, game_id, score, description, date) VALUES(2, 1, 9.0, 'Teste', '2024-06-20');
         INSERT INTO review(user_id, game_id, score, description, date) VALUES(3, 1, 8.5, 'Teste', '2024-06-20');
         INSERT INTO review(user_id, game_id, score, description, date) VALUES(4, 1, 9.6, 'Teste', '2024-06-20');
-
-        select user.id, user.name, game.name from game left join user on game.user_id = user.id;
-
-        select game.name, genre.name from game left join game_genre on game.id = game_genre.game_id left join genre on genre.id = game_genre.genre_id;
-
-        select game.name, AVG(review.score) from game left join review on game.id = review.game_id where game.id = 1;
   ''';
 
   Future<Database> initDB() async {
     final databasePath = await getDatabasesPath();
     final path = join(databasePath, databaseName);
 
-    return openDatabase(path, 
-      version:1, 
-      onCreate:(db, version) async {
-        await db.execute(create_script);
+    var commands = create_script.split(";");
+
+    return openDatabase(
+      path,
+      version: 1,
+      onCreate: (db, version) async {
+        for (String command in commands) {
+          command = command.trim();
+          if (command.isNotEmpty && command != " ") {
+            command = "$command;";
+            print(command);
+            await db.execute(command);
+          }
+        }
       },
     );
   }
@@ -115,28 +119,28 @@ class DatabaseHelper {
   }
 
   //Delete Game
-  Future<int> deleteGame(int id) async{
+  Future<int> deleteGame(int id) async {
     final Database db = await initDB();
     return db.delete('game', where: 'id = ?', whereArgs: [id]);
   }
 
   //Update Game
-  Future<int> updateGame(title, user_id, description, release_date) async{
+  Future<int> updateGame(title, user_id, description, release_date) async {
     final Database db = await initDB();
     return db.rawUpdate(
-      "update game set nome = ?, user_id = ?, description = ?, release_date = ?", 
-      [title, user_id, description, release_date]);
+        "update game set nome = ?, user_id = ?, description = ?, release_date = ?",
+        [title, user_id, description, release_date]);
   }
 
   //Search Game
-  Future<List<GameModel>> searchGame(String keyword) async{
+  Future<List<GameModel>> searchGame(String keyword) async {
     final Database db = await initDB();
-    List<Map<String, Object?>> searchResult = await db.rawQuery(
-      "select * from game where name LIKE ?", ["%$keyword"]
-    );
+    List<Map<String, Object?>> searchResult = await db
+        .rawQuery("select * from game where name LIKE ?", ["%$keyword"]);
 
     return searchResult.map((e) => GameModel.fromMap(e)).toList();
   }
+
 
   //Entrar
   Future<bool> login(LoginUser user) async{
@@ -146,7 +150,7 @@ class DatabaseHelper {
       "select * from user where email = '${user.email}' AND password = '${user.password}'"
       );
 
-    if(result.isNotEmpty){
+    if (result.isNotEmpty) {
       return true;
     } else {
       return false;
@@ -161,11 +165,11 @@ class DatabaseHelper {
       "select * from user where email = '${user.email}'"
       );
 
-    if(result.isEmpty){
+
+    if (result.isEmpty) {
       return db.insert('user', user.toMap());
-    } else{
+    } else {
       return 0;
     }
   }
-
 }
