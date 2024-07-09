@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:game_tracker/views/dashboard_game.dart';
 
 class Dashboard extends StatefulWidget {
-  Users? user;
+  final Users? user;
+
   Dashboard({super.key, this.user});
 
   @override
@@ -13,6 +14,14 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  bool filterByUser(GameModel game) {
+    if (widget.user != null) {
+      return widget.user!.id == game.userId;
+    }
+    return true;
+  }
+
+  bool Function(GameModel)? currentFilter;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,14 +47,14 @@ class _DashboardState extends State<Dashboard> {
               } else if (snapshot.hasData) {
                 // Se o usuário estiver logado, filtra pelo jogos cadastrados
                 // Se não, mostra todos.
-                var games = widget.user != null
-                    ? snapshot.data!
-                        .where((game) => game.userId == widget.user!.id)
-                        .toList()
-                    : snapshot.data;
+
+                if (currentFilter == null) {
+                  currentFilter = filterByUser;
+                }
+                var games = snapshot.data!.where(currentFilter!).toList();
                 return GridView.builder(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: games!.length),
+                        crossAxisCount: 2),
                     itemCount: games.length,
                     itemBuilder: (context, index) {
                       return DashboardGame(games[index]);
