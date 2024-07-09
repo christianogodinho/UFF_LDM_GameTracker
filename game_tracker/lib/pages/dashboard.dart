@@ -15,6 +15,8 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   bool filterByUser(GameModel game) {
+    // Se o usuário estiver logado, filtra pelo jogos cadastrados
+    // Se não, mostra todos.
     if (widget.user != null) {
       return widget.user!.id == game.userId;
     }
@@ -25,6 +27,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 34, 21, 22),
       appBar: AppBar(
         title: Text("GameTracker - Dashboard"),
         // Seleção de filtros
@@ -45,9 +48,6 @@ class _DashboardState extends State<Dashboard> {
                 return Text(
                     "Erro ao recuperar jogos do banco de dados.\n${snapshot.error}");
               } else if (snapshot.hasData) {
-                // Se o usuário estiver logado, filtra pelo jogos cadastrados
-                // Se não, mostra todos.
-
                 if (currentFilter == null) {
                   currentFilter = filterByUser;
                 }
