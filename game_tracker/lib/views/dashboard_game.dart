@@ -32,7 +32,7 @@ class DashboardGame extends StatelessWidget {
                   } else if (snapshot.hasData) {
                     return Text("Média: ${snapshot.data!}");
                   } else {
-                    return CircularProgressIndicator();
+                    return const CircularProgressIndicator();
                   }
                 })
           ],

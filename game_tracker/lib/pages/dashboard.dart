@@ -32,15 +32,91 @@ class _DashboardState extends State<Dashboard> {
         title: Text("GameTracker - Dashboard"),
         // Seleção de filtros
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.filter_alt),
-            tooltip: "Filtar jogos",
-          )
+          PopupMenuButton(
+              icon: Icon(Icons.filter_alt),
+              itemBuilder: (context) {
+                return [
+                  PopupMenuItem(
+                    child: Text("Data de Lançamento"),
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            DateTime? dateToFilter;
+                            var choice = "";
+                            return StatefulBuilder(
+                                builder: (context, StateSetter setDialogState) {
+                              return AlertDialog(
+                                title: Text("Filtrar por data de lançamento"),
+                                content: Column(
+                                  children: [
+                                    Column(
+                                      children: [
+                                        RadioListTile(
+                                          title: const Text("Antes de:"),
+                                          value: "antes",
+                                          groupValue: choice,
+                                          onChanged: (value) =>
+                                              setDialogState(() {
+                                            choice = value.toString();
+                                          }),
+                                        ),
+                                        RadioListTile(
+                                          title: const Text("Depois de:"),
+                                          value: "depois",
+                                          groupValue: choice,
+                                          onChanged: (value) =>
+                                              setDialogState(() {
+                                            choice = value.toString();
+                                          }),
+                                        )
+                                      ],
+                                    ),
+                                    InputDatePickerFormField(
+                                        firstDate: DateTime(1958),
+                                        lastDate: DateTime.now(),
+                                        onDateSubmitted: (value) =>
+                                            setDialogState(
+                                                () => dateToFilter = value)),
+                                  ],
+                                ),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        print(dateToFilter);
+                                        print(choice);
+                                        setState(
+                                          () {
+                                            currentFilter = (GameModel game) {
+                                              if (choice == "antes") {
+                                                return game.releaseDate
+                                                    .isBefore(dateToFilter!);
+                                              }
+                                              return game.releaseDate
+                                                  .isAfter(dateToFilter!);
+                                            };
+                                          },
+                                        );
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text("Aplicar")),
+                                  TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text("Cancelar"))
+                                ],
+                              );
+                            });
+                          });
+                    },
+                  ),
+                  PopupMenuItem(child: Text("Gênero")),
+                  PopupMenuItem(child: Text("Nota da Review"))
+                ];
+              }),
         ],
       ),
       body: Padding(
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           child: FutureBuilder<List<GameModel>>(
             future: DatabaseHelper().getGames(),
             builder: (context, snapshot) {
@@ -53,8 +129,9 @@ class _DashboardState extends State<Dashboard> {
                 }
                 var games = snapshot.data!.where(currentFilter!).toList();
                 return GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2),
                     itemCount: games.length,
                     itemBuilder: (context, index) {
                       return DashboardGame(games[index]);
@@ -73,6 +150,12 @@ class _DashboardState extends State<Dashboard> {
             ),
             ListTile(
               title: Text("Reviews Recentes"),
+              onTap: () {
+                Navigator.pop(context);
+                setState(() {
+                  currentFilter = filterByUser;
+                });
+              },
             )
           ],
         ),
