@@ -1,3 +1,4 @@
+import 'package:game_tracker/jsonmodels/genre_model.dart';
 import 'package:game_tracker/jsonmodels/login_user_model.dart';
 import 'package:game_tracker/jsonmodels/user_model.dart';
 import 'package:sqflite/sqflite.dart';
@@ -118,11 +119,18 @@ class DatabaseHelper {
     return result.map((e) => GameModel.fromMap(e)).toList();
   }
 
+  // Get average review points of a game
   Future<double> getAverageReviews(GameModel game) async {
     final Database db = await initDB();
     List<Map<String, Object?>> result = await db.rawQuery(
         "select AVG(review.score) from game left join review on game.id = review.game_id where game.id = ${game.id!};");
     return result.first.values.first as double;
+  }
+
+  Future<List<GenreModel>> getGenres() async {
+    final Database db = await initDB();
+    List<Map<String, Object?>> result = await db.query('genre');
+    return result.map((e) => GenreModel.fromMap(e)).toList();
   }
 
   //Delete Game
