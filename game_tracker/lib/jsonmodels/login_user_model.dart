@@ -1,26 +1,18 @@
-class Users {
-    final int? id;
-    final String name;
+class LoginUser {
     final String email;
     final String password;
 
-    Users({
-        this.id,
-        required this.name,
+    LoginUser({
         required this.email,
         required this.password,
     });
 
-    factory Users.fromMap(Map<String, dynamic> json) => Users(
-        id: json["id"],
-        name: json["name"],
+    factory LoginUser.fromMap(Map<String, dynamic> json) => LoginUser(
         email: json["email"],
         password: json["password"],
     );
 
     Map<String, dynamic> toMap() => {
-        "id": id,
-        "name": name,
         "email": email,
         "password": password,
     };

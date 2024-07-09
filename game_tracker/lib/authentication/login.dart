@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:game_tracker/authentication/sign_up.dart';
+import 'package:game_tracker/jsonmodels/login_user_model.dart';
 import 'package:game_tracker/jsonmodels/user_model.dart';
 import 'package:game_tracker/services/sqlite.dart';
 import 'package:game_tracker/views/home.dart';
@@ -25,7 +26,7 @@ class _LoginState extends State<Login> {
   final db = DatabaseHelper();
 
   login() async {
-    var response = await db.login(Users(email: email.text, password: password.text));
+    var response = await db.login(LoginUser(email: email.text, password: password.text));
     if(response == true){
       if(!mounted) return;
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const Home()));
@@ -68,7 +69,7 @@ class _LoginState extends State<Login> {
                         return null;
                       },
                       decoration: const InputDecoration(
-                        icon: Icon(Icons.person),
+                        icon: Icon(Icons.alternate_email),
                         border: InputBorder.none,
                         label: Text("E-mail"),
                         

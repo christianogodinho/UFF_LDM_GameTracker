@@ -1,3 +1,4 @@
+import 'package:game_tracker/jsonmodels/login_user_model.dart';
 import 'package:game_tracker/jsonmodels/user_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -138,7 +139,7 @@ class DatabaseHelper {
   }
 
   //Entrar
-  Future<bool> login(Users user) async{
+  Future<bool> login(LoginUser user) async{
     final Database db = await initDB();
 
     var result = await db.rawQuery(

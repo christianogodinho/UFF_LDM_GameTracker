@@ -12,6 +12,7 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+  final name = TextEditingController();
   final email = TextEditingController();
   final password = TextEditingController();
   final confirmPassword = TextEditingController();
@@ -23,7 +24,7 @@ class _SignUpState extends State<SignUp> {
   final db = DatabaseHelper();
 
   signup() async {
-    var response = await db.signUp(Users(email: email.text, password: password.text));
+    var response = await db.signUp(Users(name:name.text, email:email.text, password: password.text));
     if(response != 0){
       if(!mounted) return;
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const Login()));
@@ -60,6 +61,30 @@ class _SignUpState extends State<SignUp> {
                       color: const Color.fromARGB(255, 244, 242, 235)
                     ),
                     child: TextFormField(
+                      controller: name,
+                      validator: (value) {
+                        if(value!.isEmpty){
+                          return "Nome em branco";
+                        }
+                        return null;
+                      },
+                      decoration: const InputDecoration(
+                        icon: Icon(Icons.person),
+                        border: InputBorder.none,
+                        label: Text("Nome"),
+                        
+                      )
+                    ),
+                  ),
+
+                  Container(
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: const Color.fromARGB(255, 244, 242, 235)
+                    ),
+                    child: TextFormField(
                       controller: email,
                       validator: (value) {
                         if(value!.isEmpty){
@@ -68,7 +93,7 @@ class _SignUpState extends State<SignUp> {
                         return null;
                       },
                       decoration: const InputDecoration(
-                        icon: Icon(Icons.person),
+                        icon: Icon(Icons.alternate_email),
                         border: InputBorder.none,
                         label: Text("E-mail"),
                         
