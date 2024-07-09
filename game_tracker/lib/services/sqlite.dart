@@ -137,12 +137,12 @@ class DatabaseHelper {
     return searchResult.map((e) => GameModel.fromMap(e)).toList();
   }
 
-  //Login
+  //Entrar
   Future<bool> login(Users user) async{
     final Database db = await initDB();
 
     var result = await db.rawQuery(
-      "select * from user where name = '${user.name}' AND password = '${user.password}'"
+      "select * from user where email = '${user.email}' AND password = '${user.password}'"
       );
 
     if(result.isNotEmpty){
@@ -152,12 +152,12 @@ class DatabaseHelper {
     }
   }
 
-  //Sign up
+  //Cadastro
   Future<int> signUp(Users user) async{
     final Database db = await initDB();
 
     var result = await db.rawQuery(
-      "select * from user where name = '${user.name}'"
+      "select * from user where email = '${user.email}'"
       );
 
     if(result.isEmpty){

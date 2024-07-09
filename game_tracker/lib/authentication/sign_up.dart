@@ -1,40 +1,40 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:game_tracker/authentication/sign_up.dart';
+import 'package:game_tracker/authentication/login.dart';
 import 'package:game_tracker/jsonmodels/user_model.dart';
 import 'package:game_tracker/services/sqlite.dart';
-import 'package:game_tracker/views/home.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class SignUp extends StatefulWidget {
+  const SignUp({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<SignUp> createState() => _SignUpState();
 }
 
-class _LoginState extends State<Login> {
-
+class _SignUpState extends State<SignUp> {
   final email = TextEditingController();
   final password = TextEditingController();
+  final confirmPassword = TextEditingController();
 
   bool isObscured = true;
-  bool successfullyLoged = true;
-
-  final formKey = GlobalKey<FormState>();
+  bool isObscured2 = true;
+  bool successfullyRegistered = true;
 
   final db = DatabaseHelper();
 
-  login() async {
-    var response = await db.login(Users(email: email.text, password: password.text));
-    if(response == true){
+  signup() async {
+    var response = await db.signUp(Users(email: email.text, password: password.text));
+    if(response != 0){
       if(!mounted) return;
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const Home()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const Login()));
     }else{
       setState(() {
-        successfullyLoged = !successfullyLoged;
+        successfullyRegistered = !successfullyRegistered;
       });
     }
   }
+
+  final formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +49,7 @@ class _LoginState extends State<Login> {
               child: Column(
                 children: [
               
-                  Image.asset('images/logo.jpg'),
+                  Image.asset('images/registro.jpg'),
                   //E-mail
                   const SizedBox(height: 15,),
                   Container(
@@ -109,8 +109,44 @@ class _LoginState extends State<Login> {
                       )
                     ),
                   ),
+
+                  //Confirmar Senha
+                  Container(
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: const Color.fromARGB(255, 244, 242, 235)
+                    ),
+                    child: TextFormField(
+                      controller: confirmPassword,
+                      obscureText: isObscured2,
+                      validator: (value) {
+                        if(value!.isEmpty){
+                          return "Senha em branco";
+                        }else if(password.text != confirmPassword.text){
+                          return "As senhas não são iguais";
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        icon: const Icon(Icons.lock),
+                        border: InputBorder.none,
+                        label: const Text("Confirme a senha"),
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              isObscured2 = !isObscured2;
+                            });
+                          }, 
+                          icon: Icon(isObscured2
+                              ? Icons.visibility 
+                              : Icons.visibility_off),)
+                      )
+                    ),
+                  ),
               
-                  //Login
+                  //Cadastrar
                   const SizedBox(height: 15,),
                   Container(
                     height: 60,
@@ -122,50 +158,51 @@ class _LoginState extends State<Login> {
                     child: TextButton(
                       onPressed: () {
                         if(formKey.currentState!.validate()){
-                          //método de login
-                          login();
+                          //método de cadastro
+                          signup();
+
                         }
                       }, 
                       child: const Text(
-                        'ENTRAR', 
+                        'CADASTRAR', 
                         style: TextStyle(color: Colors.white),
                       )
                     ),
                   ),
-              
-                  //Registre-se
+
+                  //Already have account
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Text(
-                        "Não possui uma conta?",
+                        "Já possui uma conta?",
                         style: TextStyle(color: Colors.white),
                         ),
                       TextButton(onPressed: () {
-                        //Navegar para SignUp page
+                        //Navegar para Login page
                         Navigator.push(
                           context, 
-                          MaterialPageRoute(builder: (context) => const SignUp()));
+                          MaterialPageRoute(builder: (context) => const Login()));
                       }, 
                       child: const Text(
-                        "REGISTRE-SE",
+                        "ENTRAR",
                         style: TextStyle(color: Color.fromARGB(255, 0, 191, 209)),
                         )
                       )
                     ],
                   ),
-
-                  //Login error
-                  !successfullyLoged
+                  
+                  //Registration error
+                  !successfullyRegistered
                     ? const Text(
-                      'Nome de usuário ou senha incorreto, ou inexistente.',
+                      'Usuário já cadastrado. Realize o login.',
                       style: TextStyle(color: Colors.red),
                     ): const SizedBox()
-                ],
-              ),
-            ),
-          ),
-        ),
+                ]
+              )
+            )
+          )
+        )
       )
     );
   }

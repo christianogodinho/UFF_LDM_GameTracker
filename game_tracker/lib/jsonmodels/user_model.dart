@@ -1,12 +1,12 @@
 class Users {
     final int? id;
-    final String name;
+    final String? name;
     final String email;
     final String password;
 
     Users({
         this.id,
-        required this.name,
+        this.name,
         required this.email,
         required this.password,
     });

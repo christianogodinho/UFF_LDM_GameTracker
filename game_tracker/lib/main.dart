@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:game_tracker/authentication/login.dart';
 
-import 'views/home.dart';
-
 void main() {
   runApp(const MyApp());
 }
