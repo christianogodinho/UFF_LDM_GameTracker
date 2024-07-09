@@ -1,12 +1,12 @@
 import 'package:game_tracker/jsonmodels/game_model.dart';
+import 'package:game_tracker/jsonmodels/user_model.dart';
 import 'package:game_tracker/services/sqlite.dart';
 import 'package:flutter/material.dart';
 import 'package:game_tracker/views/dashboard_game.dart';
 
 class Dashboard extends StatefulWidget {
-  final bool isUserLogged;
-  int? userId;
-  Dashboard(this.isUserLogged, {super.key, this.userId});
+  Users? user;
+  Dashboard({super.key, this.user});
 
   @override
   State<Dashboard> createState() => _DashboardState();
@@ -18,6 +18,14 @@ class _DashboardState extends State<Dashboard> {
     return Scaffold(
       appBar: AppBar(
         title: Text("GameTracker - Dashboard"),
+        // Seleção de filtros
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.filter_alt),
+            tooltip: "Filtar jogos",
+          )
+        ],
       ),
       body: Padding(
           padding: EdgeInsets.all(10),
@@ -28,13 +36,17 @@ class _DashboardState extends State<Dashboard> {
                 return Text(
                     "Erro ao recuperar jogos do banco de dados.\n${snapshot.error}");
               } else if (snapshot.hasData) {
-                var games = widget.isUserLogged
+                // Se o usuário estiver logado, filtra pelo jogos cadastrados
+                // Se não, mostra todos.
+                var games = widget.user != null
                     ? snapshot.data!
-                        .where((game) => game.userId == widget.userId)
+                        .where((game) => game.userId == widget.user!.id)
                         .toList()
                     : snapshot.data;
-                return ListView.builder(
-                    itemCount: games!.length,
+                return GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: games!.length),
+                    itemCount: games.length,
                     itemBuilder: (context, index) {
                       return DashboardGame(games[index]);
                     });
@@ -43,6 +55,27 @@ class _DashboardState extends State<Dashboard> {
               }
             },
           )),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            ListTile(
+              title: const Text("Deslogar"),
+            ),
+            ListTile(
+              title: Text("Reviews Recentes"),
+            )
+          ],
+        ),
+      ),
+      floatingActionButton: widget.user == null
+          ? null
+          : FloatingActionButton(
+              onPressed: () {},
+              tooltip: "Criar um novo jogo",
+              shape: const CircleBorder(),
+              child: const Icon(Icons.add),
+            ),
     );
   }
 }
