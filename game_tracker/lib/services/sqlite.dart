@@ -118,6 +118,13 @@ class DatabaseHelper {
     return result.map((e) => GameModel.fromMap(e)).toList();
   }
 
+  Future<double> getAverageReviews(GameModel game) async {
+    final Database db = await initDB();
+    List<Map<String, Object?>> result = await db.rawQuery(
+        "select AVG(review.score) from game left join review on game.id = review.game_id where game.id = ${game.id!};");
+    return result.first.values.first as double;
+  }
+
   //Delete Game
   Future<int> deleteGame(int id) async {
     final Database db = await initDB();
@@ -141,14 +148,12 @@ class DatabaseHelper {
     return searchResult.map((e) => GameModel.fromMap(e)).toList();
   }
 
-
   //Entrar
-  Future<bool> login(LoginUser user) async{
+  Future<bool> login(LoginUser user) async {
     final Database db = await initDB();
 
     var result = await db.rawQuery(
-      "select * from user where email = '${user.email}' AND password = '${user.password}'"
-      );
+        "select * from user where email = '${user.email}' AND password = '${user.password}'");
 
     if (result.isNotEmpty) {
       return true;
@@ -158,13 +163,11 @@ class DatabaseHelper {
   }
 
   //Cadastro
-  Future<int> signUp(Users user) async{
+  Future<int> signUp(Users user) async {
     final Database db = await initDB();
 
-    var result = await db.rawQuery(
-      "select * from user where email = '${user.email}'"
-      );
-
+    var result =
+        await db.rawQuery("select * from user where email = '${user.email}'");
 
     if (result.isEmpty) {
       return db.insert('user', user.toMap());
