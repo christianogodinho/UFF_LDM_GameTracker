@@ -1,3 +1,4 @@
+import 'package:game_tracker/jsonmodels/login_user_model.dart';
 import 'package:game_tracker/jsonmodels/user_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -140,12 +141,14 @@ class DatabaseHelper {
     return searchResult.map((e) => GameModel.fromMap(e)).toList();
   }
 
-  //Login
-  Future<bool> login(Users user) async {
+
+  //Entrar
+  Future<bool> login(LoginUser user) async{
     final Database db = await initDB();
 
     var result = await db.rawQuery(
-        "select * from user where name = '${user.name}' AND password = '${user.password}'");
+      "select * from user where email = '${user.email}' AND password = '${user.password}'"
+      );
 
     if (result.isNotEmpty) {
       return true;
@@ -154,12 +157,14 @@ class DatabaseHelper {
     }
   }
 
-  //Sign up
-  Future<int> signUp(Users user) async {
+  //Cadastro
+  Future<int> signUp(Users user) async{
     final Database db = await initDB();
 
-    var result =
-        await db.rawQuery("select * from user where name = '${user.name}'");
+    var result = await db.rawQuery(
+      "select * from user where email = '${user.email}'"
+      );
+
 
     if (result.isEmpty) {
       return db.insert('user', user.toMap());

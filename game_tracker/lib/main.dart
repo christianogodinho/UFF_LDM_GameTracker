@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:game_tracker/pages/login_page.dart';
-
-import 'views/home.dart';
+import 'package:game_tracker/authentication/login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +17,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const Home(),
+      home: const Login(),
     );
   }
 }
