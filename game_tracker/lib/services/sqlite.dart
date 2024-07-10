@@ -130,7 +130,16 @@ class DatabaseHelper {
   Future<List<GenreModel>> getGenres() async {
     final Database db = await initDB();
     List<Map<String, Object?>> result = await db.query('genre');
-    return result.map((e) => GenreModel.fromMap(e)).toList();
+    var genreList = result.map((e) => GenreModel.fromMap(e)).toList();
+    for (var genre in genreList) {
+      result = await db.query("game_genre",
+          where: "game_genre.genre_id = ?", whereArgs: [genre.id!]);
+      for (var item in result) {
+        genre.gamesId.add(item["game_id"] as int);
+      }
+    }
+
+    return genreList;
   }
 
   //Delete Game
