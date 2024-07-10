@@ -23,18 +23,7 @@ class DashboardGame extends StatelessWidget {
             Text(game.name),
             Text(
                 "Lançado em: ${game.releaseDate.day}/${game.releaseDate.month}/${game.releaseDate.year}"),
-            FutureBuilder(
-                future: DatabaseHelper().getAverageReviews(game),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    print(snapshot.error);
-                    return const Text("Não há reviews");
-                  } else if (snapshot.hasData) {
-                    return Text("Média: ${snapshot.data!}");
-                  } else {
-                    return const CircularProgressIndicator();
-                  }
-                })
+            Text("Média: ${game.averageScore}")
           ],
         ),
       ),

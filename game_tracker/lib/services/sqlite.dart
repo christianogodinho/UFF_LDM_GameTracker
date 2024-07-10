@@ -116,7 +116,12 @@ class DatabaseHelper {
   Future<List<GameModel>> getGames() async {
     final Database db = await initDB();
     List<Map<String, Object?>> result = await db.query('game');
-    return result.map((e) => GameModel.fromMap(e)).toList();
+    var gameList = result.map((e) => GameModel.fromMap(e)).toList();
+    for (var game in gameList) {
+      game.averageScore = await getAverageReviews(game);
+    }
+
+    return gameList;
   }
 
   // Get average review points of a game
@@ -124,7 +129,11 @@ class DatabaseHelper {
     final Database db = await initDB();
     List<Map<String, Object?>> result = await db.rawQuery(
         "select AVG(review.score) from game left join review on game.id = review.game_id where game.id = ${game.id!};");
-    return result.first.values.first as double;
+    var ret = result.first.values.first;
+    if (ret != null) {
+      return ret as double;
+    }
+    return 0;
   }
 
   Future<List<GenreModel>> getGenres() async {
