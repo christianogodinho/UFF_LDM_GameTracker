@@ -1,4 +1,5 @@
 import 'package:game_tracker/jsonmodels/game_model.dart';
+import 'package:game_tracker/jsonmodels/genre_model.dart';
 import 'package:game_tracker/jsonmodels/user_model.dart';
 import 'package:game_tracker/services/sqlite.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,7 @@ class _DashboardState extends State<Dashboard> {
               icon: Icon(Icons.filter_alt),
               itemBuilder: (context) {
                 return [
+                  // Filtro de data de lançamento
                   PopupMenuItem(
                     child: Text("Data de Lançamento"),
                     onTap: () {
@@ -109,7 +111,80 @@ class _DashboardState extends State<Dashboard> {
                           });
                     },
                   ),
-                  PopupMenuItem(child: Text("Gênero")),
+                  // Filtrar por gênero
+                  PopupMenuItem(
+                      child: const Text("Gênero"),
+                      onTap: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              var menuChoice;
+                              GenreModel? selectedGenre;
+                              return StatefulBuilder(
+                                builder: (context, StateSetter setDialogState) {
+                                  return AlertDialog(
+                                    title: const Text("Filtrar por Gênero"),
+                                    content: FutureBuilder(
+                                        future: DatabaseHelper().getGenres(),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.hasError) {
+                                            return const Text(
+                                                "Erro ao recuperar lista de gêneros");
+                                          } else if (snapshot.hasData) {
+                                            return DropdownButtonFormField(
+                                                items: snapshot.data!
+                                                    .map((e) =>
+                                                        DropdownMenuItem(
+                                                          child: Text(e.name),
+                                                          value: e.id,
+                                                        ))
+                                                    .toList(),
+                                                value: menuChoice,
+                                                onChanged: (genre) {
+                                                  menuChoice = genre;
+                                                  selectedGenre = snapshot.data!
+                                                      .firstWhere((g) =>
+                                                          g.id == menuChoice);
+                                                  setDialogState(() {});
+                                                });
+                                          } else {
+                                            return const Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            );
+                                          }
+                                        }),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            print(menuChoice);
+                                            print(selectedGenre);
+                                            setState(
+                                              () {
+                                                currentFilter =
+                                                    (GameModel game) {
+                                                  if (selectedGenre != null) {
+                                                    return selectedGenre!
+                                                        .gamesId
+                                                        .contains(game.id);
+                                                  }
+                                                  return true;
+                                                };
+                                              },
+                                            );
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text("Aplicar")),
+                                      TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: const Text("Cancelar"))
+                                    ],
+                                  );
+                                },
+                              );
+                            });
+                      }),
                   PopupMenuItem(child: Text("Nota da Review"))
                 ];
               }),
@@ -137,7 +212,7 @@ class _DashboardState extends State<Dashboard> {
                       return DashboardGame(games[index]);
                     });
               } else {
-                return CircularProgressIndicator();
+                return const CircularProgressIndicator();
               }
             },
           )),
@@ -149,7 +224,7 @@ class _DashboardState extends State<Dashboard> {
               title: const Text("Deslogar"),
             ),
             ListTile(
-              title: Text("Reviews Recentes"),
+              title: const Text("Reviews Recentes"),
               onTap: () {
                 Navigator.pop(context);
                 setState(() {
