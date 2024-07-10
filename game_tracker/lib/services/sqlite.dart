@@ -1,3 +1,4 @@
+import 'package:game_tracker/jsonmodels/genre_model.dart';
 import 'package:game_tracker/jsonmodels/login_user_model.dart';
 import 'package:game_tracker/jsonmodels/user_model.dart';
 import 'package:sqflite/sqflite.dart';
@@ -115,7 +116,39 @@ class DatabaseHelper {
   Future<List<GameModel>> getGames() async {
     final Database db = await initDB();
     List<Map<String, Object?>> result = await db.query('game');
-    return result.map((e) => GameModel.fromMap(e)).toList();
+    var gameList = result.map((e) => GameModel.fromMap(e)).toList();
+    for (var game in gameList) {
+      game.averageScore = await getAverageReviews(game);
+    }
+
+    return gameList;
+  }
+
+  // Get average review points of a game
+  Future<double> getAverageReviews(GameModel game) async {
+    final Database db = await initDB();
+    List<Map<String, Object?>> result = await db.rawQuery(
+        "select AVG(review.score) from game left join review on game.id = review.game_id where game.id = ${game.id!};");
+    var ret = result.first.values.first;
+    if (ret != null) {
+      return ret as double;
+    }
+    return 0;
+  }
+
+  Future<List<GenreModel>> getGenres() async {
+    final Database db = await initDB();
+    List<Map<String, Object?>> result = await db.query('genre');
+    var genreList = result.map((e) => GenreModel.fromMap(e)).toList();
+    for (var genre in genreList) {
+      result = await db.query("game_genre",
+          where: "game_genre.genre_id = ?", whereArgs: [genre.id!]);
+      for (var item in result) {
+        genre.gamesId.add(item["game_id"] as int);
+      }
+    }
+
+    return genreList;
   }
 
   //Delete Game
@@ -141,14 +174,12 @@ class DatabaseHelper {
     return searchResult.map((e) => GameModel.fromMap(e)).toList();
   }
 
-
   //Entrar
-  Future<bool> login(LoginUser user) async{
+  Future<bool> login(LoginUser user) async {
     final Database db = await initDB();
 
     var result = await db.rawQuery(
-      "select * from user where email = '${user.email}' AND password = '${user.password}'"
-      );
+        "select * from user where email = '${user.email}' AND password = '${user.password}'");
 
     if (result.isNotEmpty) {
       return true;
@@ -158,13 +189,11 @@ class DatabaseHelper {
   }
 
   //Cadastro
-  Future<int> signUp(Users user) async{
+  Future<int> signUp(Users user) async {
     final Database db = await initDB();
 
-    var result = await db.rawQuery(
-      "select * from user where email = '${user.email}'"
-      );
-
+    var result =
+        await db.rawQuery("select * from user where email = '${user.email}'");
 
     if (result.isEmpty) {
       return db.insert('user', user.toMap());
