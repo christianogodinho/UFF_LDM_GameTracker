@@ -185,7 +185,47 @@ class _DashboardState extends State<Dashboard> {
                               );
                             });
                       }),
-                  PopupMenuItem(child: Text("Nota da Review"))
+                  PopupMenuItem(
+                    child: Text("Nota da Review"),
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            double nota = 5;
+                            return StatefulBuilder(
+                                builder: (context, StateSetter setDialogState) {
+                              return AlertDialog(
+                                title: Text("Filtrar por nota"),
+                                content: Slider(
+                                    value: nota,
+                                    max: 10.0,
+                                    label: "$nota",
+                                    divisions: 20,
+                                    onChanged: (novaNota) {
+                                      setDialogState(() => nota = novaNota);
+                                    }),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        setState(
+                                          () {
+                                            currentFilter = (GameModel game) {
+                                              return game.averageScore >= nota;
+                                            };
+                                          },
+                                        );
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text("Aplicar")),
+                                  TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text("Cancelar"))
+                                ],
+                              );
+                            });
+                          });
+                    },
+                  )
                 ];
               }),
         ],
