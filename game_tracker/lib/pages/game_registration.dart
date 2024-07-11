@@ -1,8 +1,4 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:sqflite/sqflite.dart';
 import '../jsonmodels/game_model.dart';
 import '../services/sqlite.dart';
 
