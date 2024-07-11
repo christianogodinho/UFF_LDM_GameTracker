@@ -77,17 +77,43 @@ class _DashboardState extends State<Dashboard> {
                                       ],
                                     ),
                                     InputDatePickerFormField(
-                                        firstDate: DateTime(1958),
-                                        lastDate: DateTime.now(),
-                                        onDateSubmitted: (value) =>
-                                            setDialogState(
-                                                () => dateToFilter = value)),
+                                      firstDate: DateTime(1958),
+                                      lastDate: DateTime.now(),
+                                      onDateSubmitted: (value) =>
+                                          setDialogState(
+                                              () => dateToFilter = value),
+                                      onDateSaved: (value) => setDialogState(
+                                          () => dateToFilter = value),
+                                    ),
                                   ],
                                 ),
                                 actions: [
                                   TextButton(
                                       onPressed: () {
-                                        print(dateToFilter);
+                                        if (dateToFilter == null) {
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  content: Text(
+                                                      "Insira uma data válida! Lembre-se de confirmar a entrada e separar dia, mês e ano por \"/\"!"),
+                                                  actions: [
+                                                    TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                context),
+                                                        child: Text("Ok"))
+                                                  ],
+                                                );
+                                              });
+                                          /* ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                            content: Text(
+                                                "Insira uma data válida. Lembre-se apertar o ok e usar os separador \"/\"!"),
+                                            duration: Duration(seconds: 8),
+                                          ));*/
+                                          return;
+                                        }
                                         print(choice);
                                         setState(
                                           () {
@@ -284,6 +310,15 @@ class _DashboardState extends State<Dashboard> {
                   currentFilter = (GameModel game) {
                     return true;
                   };
+                });
+              },
+            ),
+            ListTile(
+              title: Text("Meus jogos"),
+              onTap: () {
+                Navigator.pop(context);
+                setState(() {
+                  currentFilter = filterByUser;
                 });
               },
             )
