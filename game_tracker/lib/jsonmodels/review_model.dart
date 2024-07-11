@@ -2,7 +2,6 @@
 //
 //     final game = gameFromMap(jsonString);
 
-import 'package:meta/meta.dart';
 import 'dart:convert';
 
 ReviewModel gamemodelFromMap(String str) => ReviewModel.fromMap(json.decode(str));

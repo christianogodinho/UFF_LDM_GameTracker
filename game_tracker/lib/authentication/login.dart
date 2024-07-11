@@ -1,10 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:game_tracker/authentication/sign_up.dart';
 import 'package:game_tracker/jsonmodels/login_user_model.dart';
 import 'package:game_tracker/jsonmodels/user_model.dart';
 import 'package:game_tracker/services/sqlite.dart';
-import 'package:game_tracker/views/home.dart';
 
 import '../pages/dashboard.dart';
 
@@ -21,6 +19,7 @@ class _LoginState extends State<Login> {
 
   bool isObscured = true;
   bool successfullyLoged = true;
+  bool isUser = false;
 
   final formKey = GlobalKey<FormState>();
 
@@ -40,9 +39,15 @@ class _LoginState extends State<Login> {
                       : null)));
     } else {
       setState(() {
-        successfullyLoged = !successfullyLoged;
+        successfullyLoged = false;
       });
     }
+  }
+
+  guestLogin() async {
+    Navigator.pushReplacement(
+        context, 
+        MaterialPageRoute(builder: (context)=> Dashboard( user: null)));    
   }
 
   @override
@@ -72,7 +77,7 @@ class _LoginState extends State<Login> {
                       child: TextFormField(
                           controller: email,
                           validator: (value) {
-                            if (value!.isEmpty) {
+                            if (value!.isEmpty && isUser) {
                               return "E-mail em branco";
                             }
                             return null;
@@ -96,7 +101,7 @@ class _LoginState extends State<Login> {
                           controller: password,
                           obscureText: isObscured,
                           validator: (value) {
-                            if (value!.isEmpty) {
+                            if (value!.isEmpty && isUser) {
                               return "Senha em branco";
                             }
                             return null;
@@ -131,12 +136,40 @@ class _LoginState extends State<Login> {
                           onPressed: () {
                             if (formKey.currentState!.validate()) {
                               //método de login
+                              setState(() {
+                                isUser = true;
+                              });
+
                               login();
                             }
                           },
                           child: const Text(
                             'ENTRAR',
                             style: TextStyle(color: Colors.white),
+                          )),
+                    ),
+
+                    //Convidado
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Container(
+                      height: 45,
+                      width: MediaQuery.of(context).size.width * .5,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: const Color.fromARGB(255, 0, 191, 209)),
+                      child: TextButton(
+                          onPressed: () {
+                            setState(() {
+                              isUser = false;
+                            });
+                            guestLogin();
+                          },
+                          child: const Text(
+                            'ENTRAR COMO CONVIDADO',
+                            style: TextStyle(color: Colors.white)
+                            ,
                           )),
                     ),
 

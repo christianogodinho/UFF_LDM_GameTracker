@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:game_tracker/authentication/login.dart';
 import 'package:game_tracker/jsonmodels/user_model.dart';

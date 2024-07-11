@@ -5,12 +5,13 @@ import 'package:game_tracker/services/sqlite.dart';
 import 'package:flutter/material.dart';
 import 'package:game_tracker/views/dashboard_game.dart';
 
+import '../authentication/login.dart';
 import 'game_registration.dart';
 
 class Dashboard extends StatefulWidget {
   final Users? user;
 
-  Dashboard({super.key, this.user});
+  const Dashboard({super.key, this.user});
 
   @override
   State<Dashboard> createState() => _DashboardState();
@@ -301,6 +302,9 @@ class _DashboardState extends State<Dashboard> {
           children: [
             ListTile(
               title: const Text("Deslogar"),
+              onTap: () {
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
+              },
             ),
             ListTile(
               title: const Text("Reviews Recentes"),

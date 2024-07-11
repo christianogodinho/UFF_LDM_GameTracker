@@ -7,7 +7,7 @@ import 'package:game_tracker/services/sqlite.dart';
 class DashboardGame extends StatelessWidget {
   final GameModel game;
 
-  DashboardGame(this.game);
+  const DashboardGame(this.game);
 
   @override
   Widget build(BuildContext context) {
