@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:game_tracker/jsonmodels/game_model.dart';
+import 'package:game_tracker/services/sqlite.dart';
 
 class DashboardGame extends StatelessWidget {
   final GameModel game;
@@ -11,19 +12,21 @@ class DashboardGame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      // ToDo: Expansão dos detalhes do jogo
-      child: Card(
-        margin: EdgeInsets.all(8),
-        color: Color.fromARGB(255, 243, 236, 172),
+        // ToDo: Expansão dos detalhes do jogo
+        child: Card(
+      color: Color.fromARGB(255, 204, 220, 240),
+      child: Padding(
+        padding: EdgeInsets.all(8),
         child: Column(
           // Temporário
           children: [
             Text(game.name),
-            Text(game.releaseDate.toString()),
-            Text("Placeholder para as médias")
+            Text(
+                "Lançado em: ${game.releaseDate.day}/${game.releaseDate.month}/${game.releaseDate.year}"),
+            Text("Média: ${game.averageScore}")
           ],
         ),
       ),
-    );
+    ));
   }
 }
