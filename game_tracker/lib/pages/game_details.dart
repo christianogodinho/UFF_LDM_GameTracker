@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:game_tracker/pages/review_registration.dart';
+import 'package:game_tracker/services/sqlite.dart';
 import '../jsonmodels/game_model.dart';
-import '../services/sqlite.dart';
+import '../jsonmodels/review_model.dart';
 
-class detailsScreen extends StatefulWidget {
-  String gameName;
+class gameDetails extends StatefulWidget {
+  int gameId, userId;
   
-  detailsScreen(this.gameName, {super.key});
+  gameDetails(this.gameId, this.userId, {super.key});
 
   @override
-  State<detailsScreen> createState() => _detailsScreenState();
+  State<gameDetails> createState() => _gameDetailsState();
 }
 
-class _detailsScreenState extends State<detailsScreen> {
+class _gameDetailsState extends State<gameDetails> {
 
   DatabaseHelper db = DatabaseHelper();
 
@@ -20,16 +22,30 @@ class _detailsScreenState extends State<detailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detalhes'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _futureGameDetails(),
-          ],
+        title: Text(
+          "Detalhes do Jogo",
+          style: TextStyle(
+            fontSize: 15,
+          ),
         ),
       ),
+      body: Column(
+        children: [
+          _futureGameDetails(),
+          //_futureGameReviews(),
+        ],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.purple,
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (builder) {
+              return ReviewRegistration(widget.gameId, widget.userId);
+            });
+        },
+      )
     );
   }
 
@@ -40,13 +56,40 @@ class _detailsScreenState extends State<detailsScreen> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasData) {
-            return Column(
-              children: [
-                Text(snapshot.data.name),
-                Text(snapshot.data.description),
-                Text(snapshot.data.releaseDate),
-              ],
-            );
+            return 
+              Padding(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    Text(
+                      snapshot.data[0].name,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold
+                      ),
+                    ),
+                    Text(
+                      "Data de lançamento: ${snapshot.data[0].releaseDate.day}/${snapshot.data[0].releaseDate.month}/${snapshot.data[0].releaseDate.year}",
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                    Divider(),
+                    Text("Sinopse:",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold
+                      ),
+                    ),
+                    Text(
+                      snapshot.data[0].description,
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              );
           } else {
             return const Text("Erro ao carregar dados");
           }
@@ -58,18 +101,26 @@ class _detailsScreenState extends State<detailsScreen> {
   }
 
   FutureBuilder _futureGameReviews(){
-    
-    Future<List<GameModel>> reviews = db.getGames();
+  
+    Future<List<ReviewModel>> reviews = db.getReviewsByGame(widget.gameId.toString());
+
     return FutureBuilder(
       future: reviews,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasData) {
-            return Column(
-              children: [
-                
-              ],
-            );
+            return Expanded(child: ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                return Column(
+                  children: [
+                    Text("Nota: ${snapshot.data![index].score}"),
+                    Divider(),
+                    Text(snapshot.data![index].description),
+                  ],
+                );
+              },
+            ));
           } else {
             return const Text("Erro ao carregar dados");
           }

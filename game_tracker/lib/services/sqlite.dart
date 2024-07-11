@@ -185,10 +185,19 @@ class DatabaseHelper {
   }
 
   //Get Reviews
-  Future<List<ReviewModel>> searchReviews(String keyword) async {
+  Future<List<ReviewModel>> getReviewsByGame(String keyword) async {
     final Database db = await initDB();
     List<Map<String, Object?>> searchResult = await db
-        .rawQuery("select * from review where game_id = ?", ["keyword"]);
+        .rawQuery("select * from review where name = ?", ["keyword"]);
+
+    return searchResult.map((e) => ReviewModel.fromMap(e)).toList();
+  }
+
+  //Get Reviews
+  Future<List<ReviewModel>> getReviewsByUser(String keyword) async {
+    final Database db = await initDB();
+    List<Map<String, Object?>> searchResult = await db
+        .rawQuery("select * from review where user_id = ?", ["keyword"]);
 
     return searchResult.map((e) => ReviewModel.fromMap(e)).toList();
   }
@@ -203,7 +212,15 @@ class DatabaseHelper {
       );
     print(result);
     return result;
+  }
 
+  Future<List<Map<String, Object?>>> getUserById(String id) async{
+    final Database db = await initDB();
+
+    var result = await db.rawQuery(
+      "select * from user where user_id = '$id'"
+      );
+    return result;
   }
 
   //Cadastro
