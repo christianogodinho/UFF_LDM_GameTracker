@@ -257,22 +257,18 @@ class _DashboardState extends State<Dashboard> {
                 return const CircularProgressIndicator();
               }
             },
-          )
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.purple,
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (builder){
-              return GameRegistAlertDialog(1);
-            }
-          );
-        },
-        child: Icon(Icons.add)
-      )
           )),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.purple,
+          onPressed: () {
+            showDialog(
+                context: context,
+                builder: (builder) {
+                  return GameRegistAlertDialog(1);
+                });
+          },
+          child: Icon(Icons.add)),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -285,7 +281,9 @@ class _DashboardState extends State<Dashboard> {
               onTap: () {
                 Navigator.pop(context);
                 setState(() {
-                  currentFilter = filterByUser;
+                  currentFilter = (GameModel game) {
+                    return true;
+                  };
                 });
               },
             )
