@@ -1,4 +1,5 @@
 import 'package:game_tracker/jsonmodels/login_user_model.dart';
+import 'package:game_tracker/jsonmodels/review_model.dart';
 import 'package:game_tracker/jsonmodels/user_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -48,7 +49,7 @@ class DatabaseHelper {
 
         INSERT INTO game(user_id, name, description, release_date) VALUES(1, 'Resident Evil 4', 'Resident Evil 4 é um jogo de terror e sobrevivência no qual os jogadores terão que enfrentar situações extremas de medo. Apesar dos vários elementos de terror, o jogo é equilibrado com muita ação e uma experiência de jogo bastante variada.', '2023-03-24');
 
-        INSERT INTO game(user_id, name, description, release_date) VALUES(2, 'Persona 5', 'ransferido para a Academia Shujin, em Tóquio, Ren Amamiya está prestes a entrar no segundo ano do colegial. Após um certo incidente, sua Persona desperta, e junto com seus amigos eles formam os Ladrões-Fantasma de Corações, para roubar a fonte dos desejos deturpados dos adultos e assim reformar seus corações.', '2017-04-17');
+        INSERT INTO game(user_id, name, description, release_date) VALUES(2, 'Persona 5', 'transferido para a Academia Shujin, em Tóquio, Ren Amamiya está prestes a entrar no segundo ano do colegial. Após um certo incidente, sua Persona desperta, e junto com seus amigos eles formam os Ladrões-Fantasma de Corações, para roubar a fonte dos desejos deturpados dos adultos e assim reformar seus corações.', '2017-04-17');
 
         INSERT INTO game(user_id, name, description, release_date) VALUES(3, 'Horizon Zero Dawn', 'Horizon Zero Dawn é um RPG eletrônico de ação em que os jogadores controlam a protagonista Aloy, uma caçadora e arqueira, em um cenário futurista, um mundo aberto pós-apocalíptico dominado por criaturas mecanizadas como robôs dinossauros.', '2017-02-28');
 
@@ -141,20 +142,34 @@ class DatabaseHelper {
     return searchResult.map((e) => GameModel.fromMap(e)).toList();
   }
 
+  //Search Specific Game
+  Future<List<GameModel>> searchSpecificGame(String keyword) async {
+    final Database db = await initDB();
+    List<Map<String, Object?>> searchResult = await db
+        .rawQuery("select * from game where name LIKE ?", ["keyword"]);
+
+    return searchResult.map((e) => GameModel.fromMap(e)).toList();
+  }
+
+  //Get Reviews
+  Future<List<ReviewModel>> searchReviews(String keyword) async {
+    final Database db = await initDB();
+    List<Map<String, Object?>> searchResult = await db
+        .rawQuery("select * from review where game_id = ?", ["keyword"]);
+
+    return searchResult.map((e) => ReviewModel.fromMap(e)).toList();
+  }
+
 
   //Entrar
-  Future<bool> login(LoginUser user) async{
+  Future<List<Map<String, Object?>>> login(LoginUser user) async{
     final Database db = await initDB();
 
     var result = await db.rawQuery(
       "select * from user where email = '${user.email}' AND password = '${user.password}'"
       );
-
-    if (result.isNotEmpty) {
-      return true;
-    } else {
-      return false;
-    }
+    print(result);
+    return result;
   }
 
   //Cadastro

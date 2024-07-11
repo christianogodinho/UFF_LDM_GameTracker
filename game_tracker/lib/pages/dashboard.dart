@@ -3,6 +3,8 @@ import 'package:game_tracker/services/sqlite.dart';
 import 'package:flutter/material.dart';
 import 'package:game_tracker/views/dashboard_game.dart';
 
+import 'game_registration.dart';
+
 class Dashboard extends StatefulWidget {
   final bool isUserLogged;
   int? userId;
@@ -42,7 +44,21 @@ class _DashboardState extends State<Dashboard> {
                 return CircularProgressIndicator();
               }
             },
-          )),
+          )
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.purple,
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (builder){
+              return GameRegistAlertDialog(1);
+            }
+          );
+        },
+        child: Icon(Icons.add)
+      )
     );
   }
 }
