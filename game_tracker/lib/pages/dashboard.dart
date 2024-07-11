@@ -5,6 +5,8 @@ import 'package:game_tracker/services/sqlite.dart';
 import 'package:flutter/material.dart';
 import 'package:game_tracker/views/dashboard_game.dart';
 
+import 'game_registration.dart';
+
 class Dashboard extends StatefulWidget {
   final Users? user;
 
@@ -255,6 +257,21 @@ class _DashboardState extends State<Dashboard> {
                 return const CircularProgressIndicator();
               }
             },
+          )
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.purple,
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (builder){
+              return GameRegistAlertDialog(1);
+            }
+          );
+        },
+        child: Icon(Icons.add)
+      )
           )),
       drawer: Drawer(
         child: ListView(
@@ -275,14 +292,6 @@ class _DashboardState extends State<Dashboard> {
           ],
         ),
       ),
-      floatingActionButton: widget.user == null
-          ? null
-          : FloatingActionButton(
-              onPressed: () {},
-              tooltip: "Criar um novo jogo",
-              shape: const CircleBorder(),
-              child: const Icon(Icons.add),
-            ),
     );
   }
 }

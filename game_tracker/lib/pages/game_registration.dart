@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sqflite/sqflite.dart';
@@ -58,8 +60,7 @@ class _GameRegistAlertDialogState extends State<GameRegistAlertDialog> {
           child: const Text("Cancelar"),
         ),
         TextButton(
-          onPressed: () {
-
+          onPressed: () async{
             GameModel game = GameModel(
               userId: widget.userId,
               name: nameController.text,
@@ -71,9 +72,9 @@ class _GameRegistAlertDialogState extends State<GameRegistAlertDialog> {
               return;
             }
 
-            Future<List<GameModel>> busca = db.searchGame(game.name);
-            
-            showDialog(
+            Future<List<GameModel>> busca = db.searchSpecificGame(game.name);
+
+            await showDialog(
               context: context,
               builder: (_) => AlertDialog(
                 content: FutureBuilder(
@@ -83,7 +84,7 @@ class _GameRegistAlertDialogState extends State<GameRegistAlertDialog> {
                       return const Center(child: CircularProgressIndicator());
                     }else{
                       if(snapshot.hasData){
-                        if(snapshot.data!.isEmpty){
+                        if(snapshot.data! == []){
                           db.createGame(game);
                           return const Text("Jogo cadastrado com sucesso");
                         }else{
@@ -94,6 +95,14 @@ class _GameRegistAlertDialogState extends State<GameRegistAlertDialog> {
                     return const Text("Erro ao cadastrar jogo");
                   },
                 ),
+                actions: [
+                  TextButton(
+                    onPressed: (){
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Ok"),
+                  ),
+                ],
               ),
               barrierDismissible: false
             );
@@ -102,7 +111,7 @@ class _GameRegistAlertDialogState extends State<GameRegistAlertDialog> {
             descriptionController.clear();
             releaseDateController.clear();
 
-            Navigator.of(context).pop();
+            Navigator.pop(context);
           },
           child: const Text("Salvar"),
         ),],

@@ -26,14 +26,14 @@ class _detailsScreenState extends State<detailsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _FutureGameDetails(),
+            _futureGameDetails(),
           ],
         ),
       ),
     );
   }
 
-  FutureBuilder _FutureGameDetails() {
+  FutureBuilder _futureGameDetails() {
     Future<List<GameModel>> games = db.getGames();
     return FutureBuilder(
       future: games,
@@ -45,6 +45,29 @@ class _detailsScreenState extends State<detailsScreen> {
                 Text(snapshot.data.name),
                 Text(snapshot.data.description),
                 Text(snapshot.data.releaseDate),
+              ],
+            );
+          } else {
+            return const Text("Erro ao carregar dados");
+          }
+        } else {
+          return const CircularProgressIndicator();
+        }
+      },
+    );
+  }
+
+  FutureBuilder _futureGameReviews(){
+    
+    Future<List<GameModel>> reviews = db.getGames();
+    return FutureBuilder(
+      future: reviews,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasData) {
+            return Column(
+              children: [
+                
               ],
             );
           } else {

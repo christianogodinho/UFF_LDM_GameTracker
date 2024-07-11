@@ -6,6 +6,8 @@ import 'package:game_tracker/jsonmodels/user_model.dart';
 import 'package:game_tracker/services/sqlite.dart';
 import 'package:game_tracker/views/home.dart';
 
+import '../pages/dashboard.dart';
+
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -27,9 +29,9 @@ class _LoginState extends State<Login> {
 
   login() async {
     var response = await db.login(LoginUser(email: email.text, password: password.text));
-    if(response == true){
+    if(response.isNotEmpty){
       if(!mounted) return;
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const Home()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> Dashboard(response.isNotEmpty)));
     }else{
       setState(() {
         successfullyLoged = !successfullyLoged;
