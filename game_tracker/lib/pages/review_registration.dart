@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import '../jsonmodels/review_model.dart';
 import '../services/sqlite.dart';
 
 class ReviewRegistration extends StatefulWidget {
   
   int userId, gameId;
-  ReviewRegistration(this.gameId, this.userId, {super.key});
+  String gameName;
+  ReviewRegistration(this.gameId, this.userId, this.gameName, {super.key});
 
 
   @override
@@ -22,14 +24,35 @@ class _ReviewRegistrationState extends State<ReviewRegistration> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("Adicionar review"),
+      title: Text(
+              widget.gameName,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold
+              ),
+            ),
       content: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Center(
+            child: Text(
+              "Adicionar Review",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 15,
+              )
+            )
+          ),
+          Divider(),
+          Text("Nota"),
           DropdownButton(
+            alignment: Alignment.centerLeft,
             value: scoreController,
             items:const [
-              DropdownMenuItem(value: 2, child: Text("2")),
               DropdownMenuItem(value: 1, child: Text("1")),
+              DropdownMenuItem(value: 2, child: Text("2")),
               DropdownMenuItem(value: 3, child: Text("3")),
               DropdownMenuItem(value: 4, child: Text("4")),
               DropdownMenuItem(value: 5, child: Text("5")),

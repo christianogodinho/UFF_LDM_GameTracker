@@ -236,4 +236,10 @@ class DatabaseHelper {
       return 0;
     }
   }
+
+  //Create Review
+  Future<int> createReview(ReviewModel review) async {
+    final Database db = await initDB();
+    return db.insert('review', review.toMap());
+  }
 }
