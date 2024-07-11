@@ -19,7 +19,6 @@ class DashboardGame extends StatelessWidget {
         child: Padding(
         padding: EdgeInsets.all(5),
         child: ListTile(
-          // Temporário
           title: 
           Text(
             game.name,

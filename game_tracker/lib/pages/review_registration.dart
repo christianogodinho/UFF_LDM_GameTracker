@@ -19,12 +19,14 @@ class _ReviewRegistrationState extends State<ReviewRegistration> {
   DatabaseHelper db = DatabaseHelper();
 
   TextEditingController reviewController = TextEditingController();
-  int? scoreController;
+  double nota = 0.0;
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(
+      title: Column(
+        children: [
+          Text(
               widget.gameName,
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -32,49 +34,47 @@ class _ReviewRegistrationState extends State<ReviewRegistration> {
                 fontWeight: FontWeight.bold
               ),
             ),
-      content: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: Text(
-              "Adicionar Review",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 15,
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+              child: Text(
+                "Adicionar Review",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                )
               )
-            )
-          ),
-          Divider(),
-          Text("Nota"),
-          DropdownButton(
-            alignment: Alignment.centerLeft,
-            value: scoreController,
-            items:const [
-              DropdownMenuItem(value: 1, child: Text("1")),
-              DropdownMenuItem(value: 2, child: Text("2")),
-              DropdownMenuItem(value: 3, child: Text("3")),
-              DropdownMenuItem(value: 4, child: Text("4")),
-              DropdownMenuItem(value: 5, child: Text("5")),
-              DropdownMenuItem(value: 6, child: Text("6")),
-              DropdownMenuItem(value: 7, child: Text("7")),
-              DropdownMenuItem(value: 8, child: Text("8")),
-              DropdownMenuItem(value: 9, child: Text("9")),
-              DropdownMenuItem(value: 10, child: Text("10")),
-            ],
-            onChanged: (int? value) {
-              setState(() {
-                scoreController = value;
-              });
-            },
-          ),
-          TextField(
-            keyboardType: TextInputType.text,
-            decoration: InputDecoration(labelText: "Review"),
-            controller: reviewController,
-          ),
+            ),
+            Divider(),
+        ]
+      ),
+      content: Padding(
+        padding: EdgeInsets.fromLTRB(20, 40, 20, 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Nota"),
+            Slider(
+              value: nota,
+              max: 10.0,
+              label: "$nota",
+              divisions: 20,
+              onChanged: (novaNota) {
+                setState(() {
+                  nota = novaNota;
+                }
+              );
+            }),
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+              child: Text("Review")),
+            TextField(
+              keyboardType: TextInputType.text,
+              controller: reviewController,
+            ),
 
-        ],
+          ],
+        ),
       ),
       actions: [
         TextButton(
@@ -90,14 +90,10 @@ class _ReviewRegistrationState extends State<ReviewRegistration> {
         TextButton(
           onPressed: () async{
 
-            if(scoreController == null) {
-              return;
-            }
-
             ReviewModel review = ReviewModel(
               userId: widget.userId,
               gameId: widget.gameId,
-              score: scoreController!.toDouble(),
+              score: nota,
               description: reviewController.text,
               date: DateTime.now(),
             );
@@ -108,7 +104,7 @@ class _ReviewRegistrationState extends State<ReviewRegistration> {
 
             
           reviewController.clear();
-          scoreController = null;
+          nota = 0.0;
 
             Navigator.pop(context);
           },
