@@ -6,8 +6,9 @@ import '../jsonmodels/review_model.dart';
 
 class gameDetails extends StatefulWidget {
   int gameId, userId;
+  String gameName;
   
-  gameDetails(this.gameId, this.userId, {super.key});
+  gameDetails(this.gameId, this.userId, this.gameName, {super.key});
 
   @override
   State<gameDetails> createState() => _gameDetailsState();
@@ -37,14 +38,15 @@ class _gameDetailsState extends State<gameDetails> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.purple,
+        backgroundColor: Color.fromARGB(255, 244, 242, 235),
         onPressed: () {
           showDialog(
             context: context,
             builder: (builder) {
-              return ReviewRegistration(widget.gameId, widget.userId);
+              return ReviewRegistration(widget.gameId, widget.userId, widget.gameName);
             });
         },
+        child: Icon(Icons.add),
       )
     );
   }
@@ -62,14 +64,14 @@ class _gameDetailsState extends State<gameDetails> {
                 child: Column(
                   children: [
                     Text(
-                      snapshot.data[0].name,
+                      snapshot.data[widget.gameId-1].name,
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold
                       ),
                     ),
                     Text(
-                      "Data de lançamento: ${snapshot.data[0].releaseDate.day}/${snapshot.data[0].releaseDate.month}/${snapshot.data[0].releaseDate.year}",
+                      "Data de lançamento: ${snapshot.data[widget.gameId-1].releaseDate.day}/${snapshot.data[widget.gameId-1].releaseDate.month}/${snapshot.data[widget.gameId-1].releaseDate.year}",
                       style: TextStyle(
                         fontSize: 12,
                       ),
@@ -82,7 +84,7 @@ class _gameDetailsState extends State<gameDetails> {
                       ),
                     ),
                     Text(
-                      snapshot.data[0].description,
+                      snapshot.data[widget.gameId-1].description,
                       style: TextStyle(
                         fontSize: 12,
                       ),

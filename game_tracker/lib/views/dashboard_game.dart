@@ -44,7 +44,7 @@ class DashboardGame extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => gameDetails(game.id!, game.userId),
+            builder: (context) => gameDetails(game.id!, game.userId, game.name),
           ),
         );
       },

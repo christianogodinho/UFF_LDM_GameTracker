@@ -287,7 +287,7 @@ class _DashboardState extends State<Dashboard> {
           )),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.purple,
+          backgroundColor: Color.fromARGB(255, 244, 242, 235),
           onPressed: () {
             showDialog(
                 context: context,
