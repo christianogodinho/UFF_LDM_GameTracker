@@ -8,8 +8,10 @@ import '../pages/game_details.dart';
 
 class DashboardGame extends StatelessWidget {
   final GameModel game;
+
+  int? userId;
   final Function updater; // função que vai atualizar o estado do dashboard
-  const DashboardGame(this.game, this.updater);
+  const DashboardGame(this.game, this.userId, this.updater);
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +41,7 @@ class DashboardGame extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                gameDetails(game.id!, game.userId, game.name, updater),
+            builder: (context) => gameDetails(game.id!, game.name, userId, updater),
           ),
         );
       },

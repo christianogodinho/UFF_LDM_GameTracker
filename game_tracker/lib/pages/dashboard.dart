@@ -282,7 +282,9 @@ class _DashboardState extends State<Dashboard> {
                             crossAxisCount: 2),
                     itemCount: games.length,
                     itemBuilder: (context, index) {
-                      return DashboardGame(games[index], updater);
+                      
+                      return DashboardGame(games[index], widget.user != null ? widget.user!.id : null, updater);
+
                     });
               } else {
                 return const CircularProgressIndicator();
@@ -290,28 +292,19 @@ class _DashboardState extends State<Dashboard> {
             },
           )),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: Visibility(
+        visible: widget.user != null,
+        child: FloatingActionButton(
           backgroundColor: Color.fromARGB(255, 244, 242, 235),
           onPressed: () {
             showDialog(
                 context: context,
                 builder: (builder) {
-                  if (widget.user != null) {
-                    return GameRegistAlertDialog(widget.user!.id!, updater);
-                  }
-                  return AlertDialog(
-                    title: Text("Importante"),
-                    content:
-                        Text("Você deve estar logado para adicionar um jogo"),
-                    actions: [
-                      TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: Text("Ok"))
-                    ],
-                  );
-                });
-          },
-          child: Icon(Icons.add)),
+
+                  return GameRegistAlertDialog(widget.user!.id!, updater);
+            },
+        child: Icon(Icons.add)),
+      ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,

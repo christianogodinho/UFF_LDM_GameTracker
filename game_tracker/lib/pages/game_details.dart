@@ -5,12 +5,12 @@ import '../jsonmodels/game_model.dart';
 import '../jsonmodels/review_model.dart';
 
 class gameDetails extends StatefulWidget {
-  int gameId, userId;
+  int gameId;
+  int? userId;
   String gameName;
   Function updater;
 
-  gameDetails(this.gameId, this.userId, this.gameName, this.updater,
-      {super.key});
+  gameDetails(this.gameId, this.gameName, this.userId, this.updater, {super.key});
 
   @override
   State<gameDetails> createState() => _gameDetailsState();
@@ -30,25 +30,29 @@ class _gameDetailsState extends State<gameDetails> {
             ),
           ),
         ),
-        body: Column(
-          children: [
-            _futureGameDetails(),
-            //_futureGameReviews(),
-          ],
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        floatingActionButton: FloatingActionButton(
+      ),
+      body: Column(
+        children: [
+          _futureGameDetails(),
+          _futureGameReviews(),
+        ],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: Visibility(
+        visible: widget.userId != null,
+        child: FloatingActionButton(
           backgroundColor: Color.fromARGB(255, 244, 242, 235),
           onPressed: () {
             showDialog(
-                context: context,
-                builder: (builder) {
-                  return ReviewRegistration(
-                      widget.gameId, widget.userId, widget.gameName);
-                });
+              context: context,
+              builder: (builder) {
+                return ReviewRegistration(widget.gameId, widget.userId!, widget.gameName);
+              });
           },
           child: Icon(Icons.add),
-        ));
+        )
+      )
+    );
   }
 
   FutureBuilder _futureGameDetails() {
