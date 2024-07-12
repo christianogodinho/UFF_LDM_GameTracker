@@ -169,8 +169,8 @@ class DatabaseHelper {
   //Search Game
   Future<List<GameModel>> searchGame(String keyword) async {
     final Database db = await initDB();
-    List<Map<String, Object?>> searchResult = await db
-        .rawQuery("select * from game where name LIKE ?", [keyword]);
+    List<Map<String, Object?>> searchResult =
+        await db.rawQuery("select * from game where name LIKE ?", [keyword]);
 
     return searchResult.map((e) => GameModel.fromMap(e)).toList();
   }
@@ -178,8 +178,8 @@ class DatabaseHelper {
   //Search Specific Game
   Future<List<GameModel>> searchSpecificGame(String keyword) async {
     final Database db = await initDB();
-    List<Map<String, Object?>> searchResult = await db
-        .rawQuery('SELECT * from game WHERE name = ?', [keyword]);
+    List<Map<String, Object?>> searchResult =
+        await db.rawQuery('SELECT * from game WHERE name = ?', [keyword]);
 
     return searchResult.map((e) => GameModel.fromMap(e)).toList();
   }
@@ -187,8 +187,8 @@ class DatabaseHelper {
   //Get Reviews
   Future<List<ReviewModel>> getReviewsByGame(String keyword) async {
     final Database db = await initDB();
-    List<Map<String, Object?>> searchResult = await db
-        .rawQuery("select * from review where name = ?", ["keyword"]);
+    List<Map<String, Object?>> searchResult =
+        await db.rawQuery("select * from review where name = ?", [keyword]);
 
     return searchResult.map((e) => ReviewModel.fromMap(e)).toList();
   }
@@ -196,30 +196,26 @@ class DatabaseHelper {
   //Get Reviews
   Future<List<ReviewModel>> getReviewsByUser(String keyword) async {
     final Database db = await initDB();
-    List<Map<String, Object?>> searchResult = await db
-        .rawQuery("select * from review where user_id = ?", ["keyword"]);
+    List<Map<String, Object?>> searchResult =
+        await db.rawQuery("select * from review where user_id = ?", [keyword]);
 
     return searchResult.map((e) => ReviewModel.fromMap(e)).toList();
   }
 
-
   //Entrar
-  Future<List<Map<String, Object?>>> login(LoginUser user) async{
+  Future<List<Map<String, Object?>>> login(LoginUser user) async {
     final Database db = await initDB();
 
     var result = await db.rawQuery(
-      "select * from user where email = '${user.email}' AND password = '${user.password}'"
-      );
+        "select * from user where email = '${user.email}' AND password = '${user.password}'");
     print(result);
     return result;
   }
 
-  Future<List<Map<String, Object?>>> getUserById(String id) async{
+  Future<List<Map<String, Object?>>> getUserById(String id) async {
     final Database db = await initDB();
 
-    var result = await db.rawQuery(
-      "select * from user where user_id = '$id'"
-      );
+    var result = await db.rawQuery("select * from user where user_id = '$id'");
     return result;
   }
 
