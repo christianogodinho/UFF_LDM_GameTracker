@@ -10,7 +10,8 @@ class gameDetails extends StatefulWidget {
   String gameName;
   Function updater;
 
-  gameDetails(this.gameId, this.gameName, this.userId, this.updater, {super.key});
+  gameDetails(this.gameId, this.gameName, this.userId, this.updater,
+      {super.key});
 
   @override
   State<gameDetails> createState() => _gameDetailsState();
@@ -37,42 +38,38 @@ class _gameDetailsState extends State<gameDetails> {
                 })
           ],
         ),
-      body: Column(
-        children: [
-          _futureGameDetails(),
-          Divider(
-            thickness: 5,
-            color: const Color.fromARGB(255, 96, 96, 96),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-            child: Text(
-              "Reviews",
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-              )
-            )
-          ),
-          _futureGameReviews(),
-        ],
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: Visibility(
-        visible: widget.userId != null,
-        child: FloatingActionButton(
-          backgroundColor: Color.fromARGB(255, 244, 242, 235),
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (builder) {
-                return ReviewRegistration(widget.gameId, widget.userId!, widget.gameName);
-              });
-          },
-          child: Icon(Icons.add),
-        )
-      )
-    );
+        body: Column(
+          children: [
+            _futureGameDetails(),
+            Divider(
+              thickness: 5,
+              color: const Color.fromARGB(255, 96, 96, 96),
+            ),
+            Padding(
+                padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                child: Text("Reviews",
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ))),
+            _futureGameReviews(),
+          ],
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        floatingActionButton: Visibility(
+            visible: widget.userId != null,
+            child: FloatingActionButton(
+              backgroundColor: Color.fromARGB(255, 244, 242, 235),
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (builder) {
+                      return ReviewRegistration(
+                          widget.gameId, widget.userId!, widget.gameName);
+                    });
+              },
+              child: Icon(Icons.add),
+            )));
   }
 
   PopupMenuEntry _editGame() {
@@ -92,9 +89,12 @@ class _gameDetailsState extends State<gameDetails> {
                     TextButton(
                         onPressed: () {
                           db
-                              .updateGame(nameController.text, widget.userId,
+                              .updateGame(nameController.text, widget.gameId,
                                   descController.text, newDate)
-                              .then((_) => Navigator.pop(context));
+                              .then((_) {
+                            Navigator.pop(context);
+                            setState(() {});
+                          });
                         },
                         child: Text("Aplicar")),
                     TextButton(
@@ -111,7 +111,9 @@ class _gameDetailsState extends State<gameDetails> {
                         return Text("Um erro ocorreu");
                       }
                       if (snapshot.hasData) {
-                        GameModel game = snapshot.data!.first;
+                        GameModel game = snapshot.data!
+                            .where((e) => e.id! == widget.gameId)
+                            .first;
                         nameController.text = game.name;
                         descController.text = game.description;
                         newDate = game.releaseDate;
@@ -135,6 +137,10 @@ class _gameDetailsState extends State<gameDetails> {
                                   nameController.text = value;
                                 },
                               ),
+                              InputDatePickerFormField(
+                                  firstDate: DateTime(1958),
+                                  lastDate: DateTime.now(),
+                                  onDateSubmitted: (value) => newDate = value),
                             ],
                           ),
                         );
@@ -241,18 +247,14 @@ class _gameDetailsState extends State<gameDetails> {
                 return Column(
                   children: [
                     Divider(),
-                    Text(
-                      "Nota: ${snapshot.data![index].score}",
-                      style: TextStyle(
-                        fontSize: 11,
-                      )
-                    ),
-                    Text(
-                      snapshot.data![index].description,
-                      style: TextStyle(
-                        fontSize: 11,
-                      )
-                    ),
+                    Text("Nota: ${snapshot.data![index].score}",
+                        style: TextStyle(
+                          fontSize: 11,
+                        )),
+                    Text(snapshot.data![index].description,
+                        style: TextStyle(
+                          fontSize: 11,
+                        )),
                   ],
                 );
               },
