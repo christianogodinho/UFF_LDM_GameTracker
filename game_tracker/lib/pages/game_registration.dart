@@ -57,11 +57,12 @@ class _GameRegistAlertDialogState extends State<GameRegistAlertDialog> {
         ),
         TextButton(
           onPressed: () async{
+            var aux = releaseDateController.text.split("/");
             GameModel game = GameModel(
               userId: widget.userId,
               name: nameController.text,
               description: descriptionController.text,
-              releaseDate: DateTime.parse(releaseDateController.text),
+              releaseDate: DateTime(int.parse(aux[2]), int.parse(aux[1]), int.parse(aux[0])),
             );
 
             if(game.name.isEmpty || game.description.isEmpty || releaseDateController.text == ""){
@@ -80,7 +81,7 @@ class _GameRegistAlertDialogState extends State<GameRegistAlertDialog> {
                       return const Center(child: CircularProgressIndicator());
                     }else{
                       if(snapshot.hasData){
-                        if(snapshot.data! == []){
+                        if(snapshot.data!.isEmpty){
                           db.createGame(game);
                           return const Text("Jogo cadastrado com sucesso");
                         }else{

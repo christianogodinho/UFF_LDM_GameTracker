@@ -170,7 +170,7 @@ class DatabaseHelper {
   Future<List<GameModel>> searchGame(String keyword) async {
     final Database db = await initDB();
     List<Map<String, Object?>> searchResult = await db
-        .rawQuery("select * from game where name LIKE ?", ["%$keyword"]);
+        .rawQuery("select * from game where name LIKE ?", [keyword]);
 
     return searchResult.map((e) => GameModel.fromMap(e)).toList();
   }
@@ -179,7 +179,7 @@ class DatabaseHelper {
   Future<List<GameModel>> searchSpecificGame(String keyword) async {
     final Database db = await initDB();
     List<Map<String, Object?>> searchResult = await db
-        .rawQuery("select * from game where name LIKE ?", ["keyword"]);
+        .rawQuery('SELECT * from game WHERE name = ?', [keyword]);
 
     return searchResult.map((e) => GameModel.fromMap(e)).toList();
   }
