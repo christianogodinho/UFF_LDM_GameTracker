@@ -298,11 +298,12 @@ class _DashboardState extends State<Dashboard> {
           backgroundColor: Color.fromARGB(255, 244, 242, 235),
           onPressed: () {
             showDialog(
-                context: context,
-                builder: (builder) {
-
-                  return GameRegistAlertDialog(widget.user!.id!, updater);
-            },
+              context: context,
+              builder: (builder) {
+                return GameRegistAlertDialog(widget.user!.id!, updater);
+              }
+            );
+          },
         child: Icon(Icons.add)),
       ),
       drawer: Drawer(

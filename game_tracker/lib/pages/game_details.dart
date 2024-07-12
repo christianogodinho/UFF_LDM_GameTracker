@@ -30,7 +30,6 @@ class _gameDetailsState extends State<gameDetails> {
             ),
           ),
         ),
-      ),
       body: Column(
         children: [
           _futureGameDetails(),

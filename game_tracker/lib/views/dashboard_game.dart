@@ -11,7 +11,7 @@ class DashboardGame extends StatelessWidget {
 
   int? userId;
   final Function updater; // função que vai atualizar o estado do dashboard
-  const DashboardGame(this.game, this.userId, this.updater);
+  DashboardGame(this.game, this.userId, this.updater);
 
   @override
   Widget build(BuildContext context) {
