@@ -27,6 +27,10 @@ class _DashboardState extends State<Dashboard> {
     return true;
   }
 
+  void updater() {
+    setState(() {});
+  }
+
   bool Function(GameModel)? currentFilter;
   @override
   Widget build(BuildContext context) {
@@ -278,7 +282,7 @@ class _DashboardState extends State<Dashboard> {
                             crossAxisCount: 2),
                     itemCount: games.length,
                     itemBuilder: (context, index) {
-                      return DashboardGame(games[index]);
+                      return DashboardGame(games[index], updater);
                     });
               } else {
                 return const CircularProgressIndicator();
@@ -292,7 +296,19 @@ class _DashboardState extends State<Dashboard> {
             showDialog(
                 context: context,
                 builder: (builder) {
-                  return GameRegistAlertDialog(1);
+                  if (widget.user != null) {
+                    return GameRegistAlertDialog(widget.user!.id!, updater);
+                  }
+                  return AlertDialog(
+                    title: Text("Importante"),
+                    content:
+                        Text("Você deve estar logado para adicionar um jogo"),
+                    actions: [
+                      TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text("Ok"))
+                    ],
+                  );
                 });
           },
           child: Icon(Icons.add)),
@@ -303,7 +319,8 @@ class _DashboardState extends State<Dashboard> {
             ListTile(
               title: const Text("Deslogar"),
               onTap: () {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (context) => Login()));
               },
             ),
             ListTile(

@@ -3,17 +3,15 @@ import '../jsonmodels/game_model.dart';
 import '../services/sqlite.dart';
 
 class GameRegistAlertDialog extends StatefulWidget {
-  
   int userId;
-  GameRegistAlertDialog(this.userId,{super.key});
-
+  Function updater;
+  GameRegistAlertDialog(this.userId, this.updater, {super.key});
 
   @override
   State<GameRegistAlertDialog> createState() => _GameRegistAlertDialogState();
 }
 
 class _GameRegistAlertDialogState extends State<GameRegistAlertDialog> {
-
   DatabaseHelper db = DatabaseHelper();
 
   TextEditingController nameController = TextEditingController();
@@ -46,7 +44,6 @@ class _GameRegistAlertDialogState extends State<GameRegistAlertDialog> {
       actions: [
         TextButton(
           onPressed: () {
-
             nameController.clear();
             descriptionController.clear();
             releaseDateController.clear();
@@ -56,54 +53,46 @@ class _GameRegistAlertDialogState extends State<GameRegistAlertDialog> {
           child: const Text("Cancelar"),
         ),
         TextButton(
-          onPressed: () async{
+          onPressed: () async {
             var aux = releaseDateController.text.split("/");
             GameModel game = GameModel(
               userId: widget.userId,
               name: nameController.text,
               description: descriptionController.text,
-              releaseDate: DateTime(int.parse(aux[2]), int.parse(aux[1]), int.parse(aux[0])),
+              releaseDate: DateTime(
+                  int.parse(aux[2]), int.parse(aux[1]), int.parse(aux[0])),
             );
 
-            if(game.name.isEmpty || game.description.isEmpty || releaseDateController.text == ""){
+            if (game.name.isEmpty ||
+                game.description.isEmpty ||
+                releaseDateController.text == "") {
               return;
             }
 
-            Future<List<GameModel>> busca = db.searchSpecificGame(game.name);
-
+            List<GameModel> busca = await db.searchSpecificGame(game.name);
+            var message = "";
+            if (busca.isNotEmpty) {
+              message = "Jogo já existente";
+            } else {
+              db.createGame(game);
+              widget.updater();
+              message = "Jogo criado com sucesso";
+            }
             await showDialog(
-              context: context,
-              builder: (_) => AlertDialog(
-                content: FutureBuilder(
-                  future: busca,
-                  builder: (context, snapshot){
-                    if(snapshot.connectionState == ConnectionState.waiting){
-                      return const Center(child: CircularProgressIndicator());
-                    }else{
-                      if(snapshot.hasData){
-                        if(snapshot.data!.isEmpty){
-                          db.createGame(game);
-                          return const Text("Jogo cadastrado com sucesso");
-                        }else{
-                          return const Text("Jogo já cadastrado");
-                        }
-                      }
-                    }
-                    return const Text("Erro ao cadastrar jogo");
-                  },
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: (){
-                      Navigator.pop(context);
-                    },
-                    child: const Text("Ok"),
-                  ),
-                ],
-              ),
-              barrierDismissible: false
-            );
-            
+                context: context,
+                builder: (_) => AlertDialog(
+                      content: Text(message),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text("Ok"),
+                        ),
+                      ],
+                    ),
+                barrierDismissible: false);
+
             nameController.clear();
             descriptionController.clear();
             releaseDateController.clear();
@@ -111,7 +100,8 @@ class _GameRegistAlertDialogState extends State<GameRegistAlertDialog> {
             Navigator.pop(context);
           },
           child: const Text("Salvar"),
-        ),],
+        ),
+      ],
     );
   }
 }
