@@ -40,6 +40,20 @@ class _gameDetailsState extends State<gameDetails> {
       body: Column(
         children: [
           _futureGameDetails(),
+          Divider(
+            thickness: 5,
+            color: const Color.fromARGB(255, 96, 96, 96),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+            child: Text(
+              "Reviews",
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              )
+            )
+          ),
           _futureGameReviews(),
         ],
       ),
@@ -226,9 +240,19 @@ class _gameDetailsState extends State<gameDetails> {
               itemBuilder: (context, index) {
                 return Column(
                   children: [
-                    Text("Nota: ${snapshot.data![index].score}"),
                     Divider(),
-                    Text(snapshot.data![index].description),
+                    Text(
+                      "Nota: ${snapshot.data![index].score}",
+                      style: TextStyle(
+                        fontSize: 11,
+                      )
+                    ),
+                    Text(
+                      snapshot.data![index].description,
+                      style: TextStyle(
+                        fontSize: 11,
+                      )
+                    ),
                   ],
                 );
               },
