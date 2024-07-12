@@ -8,8 +8,9 @@ import '../pages/game_details.dart';
 
 class DashboardGame extends StatelessWidget {
   final GameModel game;
+  int? userId;
 
-  const DashboardGame(this.game);
+  DashboardGame(this.game, this.userId);
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +44,7 @@ class DashboardGame extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => gameDetails(game.id!, game.userId, game.name),
+            builder: (context) => gameDetails(game.id!, game.name, userId),
           ),
         );
       },

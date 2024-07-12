@@ -5,10 +5,11 @@ import '../jsonmodels/game_model.dart';
 import '../jsonmodels/review_model.dart';
 
 class gameDetails extends StatefulWidget {
-  int gameId, userId;
+  int gameId;
+  int? userId;
   String gameName;
   
-  gameDetails(this.gameId, this.userId, this.gameName, {super.key});
+  gameDetails(this.gameId, this.gameName, this.userId, {super.key});
 
   @override
   State<gameDetails> createState() => _gameDetailsState();
@@ -33,20 +34,23 @@ class _gameDetailsState extends State<gameDetails> {
       body: Column(
         children: [
           _futureGameDetails(),
-          //_futureGameReviews(),
+          _futureGameReviews(),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Color.fromARGB(255, 244, 242, 235),
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (builder) {
-              return ReviewRegistration(widget.gameId, widget.userId, widget.gameName);
-            });
-        },
-        child: Icon(Icons.add),
+      floatingActionButton: Visibility(
+        visible: widget.userId != null,
+        child: FloatingActionButton(
+          backgroundColor: Color.fromARGB(255, 244, 242, 235),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (builder) {
+                return ReviewRegistration(widget.gameId, widget.userId!, widget.gameName);
+              });
+          },
+          child: Icon(Icons.add),
+        )
       )
     );
   }

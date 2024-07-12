@@ -278,7 +278,7 @@ class _DashboardState extends State<Dashboard> {
                             crossAxisCount: 2),
                     itemCount: games.length,
                     itemBuilder: (context, index) {
-                      return DashboardGame(games[index]);
+                      return DashboardGame(games[index], widget.user != null ? widget.user!.id : null);
                     });
               } else {
                 return const CircularProgressIndicator();
@@ -286,16 +286,19 @@ class _DashboardState extends State<Dashboard> {
             },
           )),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: Visibility(
+        visible: widget.user != null,
+        child: FloatingActionButton(
           backgroundColor: Color.fromARGB(255, 244, 242, 235),
           onPressed: () {
             showDialog(
                 context: context,
                 builder: (builder) {
-                  return GameRegistAlertDialog(1);
+                  return GameRegistAlertDialog(widget.user!.id!);
                 });
-          },
-          child: Icon(Icons.add)),
+            },
+        child: Icon(Icons.add)),
+      ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
