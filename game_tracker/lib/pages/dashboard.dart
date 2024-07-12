@@ -27,6 +27,10 @@ class _DashboardState extends State<Dashboard> {
     return true;
   }
 
+  void updater() {
+    setState(() {});
+  }
+
   bool Function(GameModel)? currentFilter;
   @override
   Widget build(BuildContext context) {
@@ -278,7 +282,9 @@ class _DashboardState extends State<Dashboard> {
                             crossAxisCount: 2),
                     itemCount: games.length,
                     itemBuilder: (context, index) {
-                      return DashboardGame(games[index], widget.user != null ? widget.user!.id : null);
+                      
+                      return DashboardGame(games[index], widget.user != null ? widget.user!.id : null, updater);
+
                     });
               } else {
                 return const CircularProgressIndicator();
@@ -294,8 +300,8 @@ class _DashboardState extends State<Dashboard> {
             showDialog(
                 context: context,
                 builder: (builder) {
-                  return GameRegistAlertDialog(widget.user!.id!);
-                });
+
+                  return GameRegistAlertDialog(widget.user!.id!, updater);
             },
         child: Icon(Icons.add)),
       ),
@@ -306,7 +312,8 @@ class _DashboardState extends State<Dashboard> {
             ListTile(
               title: const Text("Deslogar"),
               onTap: () {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (context) => Login()));
               },
             ),
             ListTile(
