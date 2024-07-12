@@ -187,8 +187,9 @@ class DatabaseHelper {
   //Get Reviews
   Future<List<ReviewModel>> getReviewsByGame(String keyword) async {
     final Database db = await initDB();
+    print(keyword);
     List<Map<String, Object?>> searchResult =
-        await db.rawQuery("select * from review where name = ?", [keyword]);
+        await db.rawQuery("select * from review where game_id = ?", [keyword]);
 
     return searchResult.map((e) => ReviewModel.fromMap(e)).toList();
   }
