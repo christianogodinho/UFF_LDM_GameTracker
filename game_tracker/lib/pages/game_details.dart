@@ -33,7 +33,7 @@ class _gameDetailsState extends State<gameDetails> {
             PopupMenuButton(
                 icon: Icon(Icons.more_vert),
                 itemBuilder: (context) {
-                  return [_deleteGame()];
+                  return [_deleteGame(), _editGame()];
                 })
           ],
         ),
@@ -58,6 +58,81 @@ class _gameDetailsState extends State<gameDetails> {
           child: Icon(Icons.add),
         )
       )
+    );
+  }
+
+  PopupMenuEntry _editGame() {
+    return PopupMenuItem(
+      onTap: () {
+        TextEditingController nameController = TextEditingController();
+        TextEditingController descController = TextEditingController();
+        DateTime newDate = DateTime.now();
+        showDialog(
+          context: context,
+          builder: (context) {
+            return StatefulBuilder(
+                builder: (context, StateSetter setDialogState) {
+              return AlertDialog(
+                  title: Text("Editando jogo"),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          db
+                              .updateGame(nameController.text, widget.userId,
+                                  descController.text, newDate)
+                              .then((_) => Navigator.pop(context));
+                        },
+                        child: Text("Aplicar")),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text("Cancelar"))
+                  ],
+                  content: FutureBuilder(
+                    future: db.getGames(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        print(snapshot.error);
+                        return Text("Um erro ocorreu");
+                      }
+                      if (snapshot.hasData) {
+                        GameModel game = snapshot.data!.first;
+                        nameController.text = game.name;
+                        descController.text = game.description;
+                        newDate = game.releaseDate;
+                        return Padding(
+                          padding: EdgeInsets.all(12),
+                          child: Column(
+                            children: [
+                              TextField(
+                                controller: nameController,
+                                decoration:
+                                    InputDecoration(label: Text("Nome")),
+                                onChanged: (value) {
+                                  nameController.text = value;
+                                },
+                              ),
+                              TextField(
+                                controller: descController,
+                                decoration:
+                                    InputDecoration(label: Text("Descrição")),
+                                onChanged: (value) {
+                                  nameController.text = value;
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      return CircularProgressIndicator();
+                    },
+                  ));
+            });
+          },
+        );
+      },
+      child: Text("Editar Jogo"),
     );
   }
 
