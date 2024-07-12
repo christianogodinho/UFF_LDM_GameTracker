@@ -159,11 +159,17 @@ class DatabaseHelper {
   }
 
   //Update Game
-  Future<int> updateGame(title, user_id, description, release_date) async {
+  Future<int> updateGame(
+      title, user_id, description, DateTime release_date) async {
     final Database db = await initDB();
     return db.rawUpdate(
-        "update game set nome = ?, user_id = ?, description = ?, release_date = ?",
-        [title, user_id, description, release_date]);
+        "update game set name = ?, user_id = ?, description = ?, release_date = ?",
+        [
+          title,
+          user_id,
+          description,
+          "${release_date.year.toString().padLeft(4, '0')}-${release_date.month.toString().padLeft(2, '0')}-${release_date.day.toString().padLeft(2, '0')}"
+        ]);
   }
 
   //Search Game
