@@ -1,12 +1,8 @@
-// To parse this JSON data, do
-//
-//     final game = gameFromMap(jsonString);
-
 import 'dart:convert';
 
-ReviewModel gamemodelFromMap(String str) => ReviewModel.fromMap(json.decode(str));
+ReviewModel reviewModelFromMap(String str) => ReviewModel.fromMap(json.decode(str));
 
-String gamemodelToMap(ReviewModel data) => json.encode(data.toMap());
+String reviewModelToMap(ReviewModel data) => json.encode(data.toMap());
 
 class ReviewModel {
     final int? id;
@@ -38,7 +34,7 @@ class ReviewModel {
     Map<String, dynamic> toMap() => {
         "id": id,
         "user_id": userId,
-        "gameId": gameId,
+        "game_id": gameId,
         "score": score,
         "description": description,
         "date": "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}",

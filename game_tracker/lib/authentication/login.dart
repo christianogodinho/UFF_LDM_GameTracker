@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:game_tracker/authentication/sign_up.dart';
-import 'package:game_tracker/jsonmodels/login_user_model.dart';
-import 'package:game_tracker/jsonmodels/user_model.dart';
-import 'package:game_tracker/services/sqlite.dart';
+import 'package:game_tracker/models/login_user_model.dart';
+import 'package:game_tracker/models/user_model.dart';
+import 'package:game_tracker/utils/sqlite.dart';
 
-import '../pages/dashboard.dart';
+import '../view/pages/dashboard.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -25,6 +25,7 @@ class _LoginState extends State<Login> {
 
   final db = DatabaseHelper();
 
+  //Realiza o login do usuário cadastrado
   login() async {
     var response =
         await db.login(LoginUser(email: email.text, password: password.text));
@@ -44,12 +45,14 @@ class _LoginState extends State<Login> {
     }
   }
 
+  //Realiza o login do usuário como convidado
   guestLogin() async {
     Navigator.pushReplacement(
         context, 
         MaterialPageRoute(builder: (context)=> Dashboard( user: null)));    
   }
 
+  //Cria a tela de login
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -153,12 +156,8 @@ class _LoginState extends State<Login> {
                     const SizedBox(
                       height: 15,
                     ),
-                    Container(
-                      height: 45,
-                      width: MediaQuery.of(context).size.width * .5,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: const Color.fromARGB(255, 0, 191, 209)),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * .70,
                       child: TextButton(
                           onPressed: () {
                             setState(() {
@@ -182,22 +181,22 @@ class _LoginState extends State<Login> {
                           style: TextStyle(color: Colors.white),
                         ),
                         TextButton(
-                            onPressed: () {
-                              //Navegar para SignUp page
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const SignUp()));
-                            },
-                            child: const Text(
-                              "REGISTRE-SE",
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 0, 191, 209)),
-                            ))
+                          onPressed: () {
+                            //Navegar para SignUp page
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const SignUp())
+                            );
+                          },
+                          child: const Text(
+                            "REGISTRE-SE",
+                            style: TextStyle(color: Color.fromARGB(255, 0, 191, 209)),
+                          )
+                        )
                       ],
                     ),
 
-                    //Login error
+                    //Erro de login
                     !successfullyLoged
                         ? const Text(
                             'Nome de usuário ou senha incorreto, ou inexistente.',

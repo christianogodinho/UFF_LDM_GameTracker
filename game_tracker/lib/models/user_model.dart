@@ -1,3 +1,9 @@
+import 'dart:convert';
+
+Users usersFromMap(String str) => Users.fromMap(json.decode(str));
+
+String usersToMap(Users data) => json.encode(data.toMap());
+
 class Users {
     final int? id;
     final String name;

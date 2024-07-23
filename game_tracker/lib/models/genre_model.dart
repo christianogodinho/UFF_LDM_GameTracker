@@ -8,7 +8,6 @@ String genremodelToMap(GenreModel data) => json.encode(data.toMap());
 class GenreModel {
   final int? id;
   final String name;
-  // Não sei se está correto, mas funciona
   List<int> gamesId = [];
 
   GenreModel({

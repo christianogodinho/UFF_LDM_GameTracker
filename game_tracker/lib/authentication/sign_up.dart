@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:game_tracker/authentication/login.dart';
-import 'package:game_tracker/jsonmodels/user_model.dart';
-import 'package:game_tracker/services/sqlite.dart';
+import 'package:game_tracker/models/user_model.dart';
+import 'package:game_tracker/utils/sqlite.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -22,6 +22,7 @@ class _SignUpState extends State<SignUp> {
 
   final db = DatabaseHelper();
 
+  //Realiza o cadastro do usuário
   signup() async {
     var response = await db.signUp(Users(name:name.text, email:email.text, password: password.text));
     if(response != 0){
@@ -36,6 +37,7 @@ class _SignUpState extends State<SignUp> {
 
   final formKey = GlobalKey<FormState>();
 
+  //Cria tela de cadastro
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -194,7 +196,7 @@ class _SignUpState extends State<SignUp> {
                     ),
                   ),
 
-                  //Already have account
+                  //Já possui uma conta
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -203,7 +205,7 @@ class _SignUpState extends State<SignUp> {
                         style: TextStyle(color: Colors.white),
                         ),
                       TextButton(onPressed: () {
-                        //Navegar para Login page
+                        //Navegar para página de Login
                         Navigator.push(
                           context, 
                           MaterialPageRoute(builder: (context) => const Login()));
@@ -216,7 +218,7 @@ class _SignUpState extends State<SignUp> {
                     ],
                   ),
                   
-                  //Registration error
+                  //Erro no cadastro
                   !successfullyRegistered
                     ? const Text(
                       'Usuário já cadastrado. Realize o login.',
